@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -8,11 +8,90 @@ import Textfield from './Textfield';
 import BasicButtons2 from './Button2';
 
 function ConfAdm() {
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = useState('1');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const [nombre, setNombre] = useState();
+    const [apellido, setApellido] = useState();
+    const [nroDocumento, setNroDocumento] = useState();
+    const [correo, setCorreo] = useState();
+    const [constraseña, setContraseña] = useState();
+    const [idioma, setIdioma] = useState();
+    const [prefijo, setPrefijo] = useState();
+    const [colorFavorito, setColorFavorito] = useState();
+
+    const [usuarios, setUsuarios] = useState([]);
+    const [actual, setActual] = useState();
+
+    useEffect(() => {
+        let newUsuarios = JSON.parse(localStorage.getItem("usuarios"));
+        let newActual = JSON.parse(localStorage.getItem("UsuarioActual"))
+        setUsuarios(newUsuarios)
+        setActual(newActual)
+    }, [])
+
+    const boton1 = () => {
+        for(var i = 0; i < usuarios.length; i++){
+            if(usuarios[i].Id == actual.Id){
+                if(nombre != undefined){
+                    actual.Nombre = nombre;
+                    usuarios[i].Nombre = nombre;
+                }
+                if(apellido != undefined){
+                    actual.Appelido = apellido;
+                    usuarios[i].Appelido = apellido;
+                }
+                if(nroDocumento != undefined){
+                    actual.NroDoc = nroDocumento;
+                    usuarios[i].NroDoc = nroDocumento;
+                }
+                window.localStorage.setItem("UsuarioActual", JSON.stringify(actual));
+                window.localStorage.setItem("usuarios", JSON.stringify(usuarios));
+            }
+        }
+    }
+
+    const boton2 = () => {
+        for(var i = 0; i < usuarios.length; i++){
+            if(usuarios[i].Id == actual.Id){
+                if(correo != undefined){
+                    actual.Correo = correo;
+                    usuarios[i].Correo = correo;
+                }
+                if(constraseña != undefined){
+                    actual.Contraseña = constraseña;
+                    usuarios[i].Contraseña = constraseña;
+                }
+                window.localStorage.setItem("UsuarioActual", JSON.stringify(actual));
+                window.localStorage.setItem("usuarios", JSON.stringify(usuarios));
+            }
+            
+        }
+    }
+
+    const boton3 = () => {
+        for(var i = 0; i < usuarios.length; i++){
+            if(usuarios[i].Id == actual.Id){
+                if(idioma != undefined){
+                    actual.Idioma = idioma;
+                    usuarios[i].Idioma = idioma;
+                }
+                if(prefijo != undefined){
+                    actual.Prefijo = prefijo;
+                    usuarios[i].Prefijo = prefijo;
+                }
+                if(colorFavorito != undefined){
+                    actual.ColorFavorito = colorFavorito;
+                    usuarios[i].ColorFavorito = colorFavorito;
+                }
+                window.localStorage.setItem("UsuarioActual", JSON.stringify(actual));
+                window.localStorage.setItem("usuarios", JSON.stringify(usuarios));
+            }
+        }
+    }
 
     return (
         <Box sx={{ width: '100%', typography: 'body1', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -74,48 +153,67 @@ function ConfAdm() {
                 </Box>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
                     <TabPanel value="1" sx={{ width: '100%' }}>
-                        <div>
+                        <div
+                            onChange={event => setNombre(event.target.value)}
+                        >
                             <Textfield texto='Nombres' />
                         </div>
-                        <div>
-                            <Textfield texto='Tipo de Documento' />
-                        </div>
-                        <div>
+                        <div
+                            onChange={event => setApellido(event.target.value)}
+                        >
                             <Textfield texto='Apellidos' />
                         </div>
-                        <div>
+                        <div
+                            onChange={event => setNroDocumento(event.target.value)}
+                        >
                             <Textfield texto='Nro de Documento' />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}
+                            onClick={boton1}
+                        >
                             <BasicButtons2 texto='Guardar' />
                         </div>
                     </TabPanel>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
                     <TabPanel value="2" sx={{ width: '100%' }}>
-                        <div>
+                        <div
+                            onChange={event => setCorreo(event.target.value)}
+                        >
                             <Textfield texto='Correo' />
                         </div>
-                        <div>
+                        <div
+                            onChange={event => setContraseña(event.target.value)}
+                        >
                             <Textfield texto='Contraseña' />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}
+                            onClick={boton2}
+                        >
                             <BasicButtons2 texto='Guardar' />
                         </div>
                     </TabPanel>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
                     <TabPanel value="3" sx={{ width: '100%' }}>
-                        <div>
+                        <div
+                            onChange={event => setIdioma(event.target.value)}
+                        >
                             <Textfield texto='Idioma' />
                         </div>
-                        <div>
+                        <div
+                            onChange={event => setPrefijo(event.target.value)}
+                        >
                             <Textfield texto='Prefijo' />
                         </div>
-                        <div>
+                        <div
+                            onChange={event => setColorFavorito(event.target.value)}
+                        >
                             <Textfield texto='Color Favorito' />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}
+                            onClick={boton3}
+                        >
                             <BasicButtons2 texto='Guardar' />
                         </div>
                     </TabPanel>
