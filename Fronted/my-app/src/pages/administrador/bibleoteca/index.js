@@ -10,9 +10,10 @@ import Pagination2 from '@/components/Pagination';
 
 function index() {
     const [nombreUser, setNombreUser] = useState('');
-
+    const [ini, setIni] = useState(1)
     useEffect(() => {
         let constUsuario = localStorage.getItem('UsuarioActual');
+        setIni(localStorage.getItem('currentPage'))
         if (constUsuario) {
             const usuario = JSON.parse(constUsuario);
             setNombreUser(usuario.Nombre);
@@ -22,27 +23,51 @@ function index() {
     }, []);
 
     const [libros, setLibros] = useState([]);
+    const [librosMostrar, setLibrosMostrar] = useState([]);
+    const [maxPages, setMaxPages] = useState(1);
+    const [startPage, setStartPage] = useState(1);
+    const [busqueda, setBusqueda] = useState('');
 
-        const getDataFromLocalStorage = () => {
-        try {
-            const librosLocal = localStorage.getItem('libros');
-            if (librosLocal) {
-            const nuevosLibros = JSON.parse(librosLocal);
-            setLibros(nuevosLibros);
-            }
-        } catch (error) {
-            console.error('Error: ', error);
+    useEffect(() => {
+        let newLibros = JSON.parse(localStorage.getItem("libros"));
+        setLibros(newLibros)
+    }, [])
+    
+    const setearLibrosBuscados = (start, buscarCampo) => {
+        let iniPage = start * 3;
+        let maxPage = iniPage + 3;
+
+        let filteredLibros = libros;
+
+        if (buscarCampo.trim() !== '') {
+        filteredLibros = libros.filter(
+            (libro) =>
+            libro.titulo.toLowerCase().includes(buscarCampo.toLowerCase())
+        );
         }
-        };
-    
-        useEffect(() => {
-            getDataFromLocalStorage();
-        }, [])
-    
-        console.log(libros.length)
-    
-        const numpages = Math.ceil(libros.length / 3);
-    
+
+        const slice1 = filteredLibros.slice(iniPage, maxPage);
+        setLibrosMostrar(slice1);
+
+        let oldMaxPages = Math.ceil(filteredLibros.length / 3);
+        setMaxPages(oldMaxPages);
+        
+    }
+
+    useEffect(() => {
+        //Aquí poner la página actual obtenido
+        let currentPage = startPage -1;
+        setearLibrosBuscados(currentPage, busqueda)
+    }, [busqueda, startPage, libros]) //Aquí colocar cada que cambie la página del pagination, para que se cargue todo
+
+    const handlePageChange = (newStartPage) => {
+        setStartPage(newStartPage);
+    };
+
+    const goEditarLibro = () => {
+        location.href = "/administrador/bibleoteca/nuevoLibro";
+    };
+
     return (
         <>
             <div className={styles.megaConte}>
@@ -63,22 +88,41 @@ function index() {
                         <div className={styles.subMegaConte2}>
                             <div className={styles.conteAgregar}>
                                 <h1>Biblioteca</h1>
-                                <div className={styles.subConteAgregar2}>
+                                <div 
+                                    className={styles.subConteAgregar2}
+                                    onClick={goEditarLibro}
+                                >
                                     <Boton3 texto='Añadir un nuevo recurso' estilo='contained'/>
                                 </div>
                             </div>
                             <Divider />
-                            <div className={styles.conteAgregar2}>
-                                <BusquedaAdmin />
+                            <div 
+                                className={styles.conteAgregar2}
+                            >
+                                <BusquedaAdmin 
+                                    onBuscarCargado={setBusqueda}    
+                                />
                             </div>
                             <div className={styles.conteAgregar3}>
-                                <Libro Titulo='Libro Numero 1' Isbn='11111111' Autor='Autor 1' Editor= 'Editor 1'/>
-                                <Libro Titulo='Libro Numero 2' Isbn='22222222' Autor='Autor 2' Editor= 'Editor 2'/>
-                                <Libro Titulo='Libro Numero 3' Isbn='33333333' Autor='Autor 3' Editor= 'Editor 3'/>
+                                {librosMostrar.map((libro) => (
+                                    <Libro 
+                                        Titulo={libro.titulo}
+                                        Isbn={libro.ISBN13}
+                                        Autor={libro.autor}
+                                        Foto={libro.FotoLibro}
+                                        Editor={libro.editorial}
+                                        LibroId={libro.id}
+                                        Estado={libro.disponibilidad}
+                                        Editorial={libro.editorial}
+                                        Topico={libro.categoria}
+                                    />
+                                ))}
+                            </div>
+                            <div>
+                                <Pagination2 maxPage={maxPages} onPageChange={handlePageChange}/>
                             </div>
                         </div>
                         <div>
-                            <Pagination2 maxPage= {numpages} />
                         </div>
                     </div>
                 </div>

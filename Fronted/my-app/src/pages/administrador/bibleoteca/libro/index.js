@@ -8,6 +8,15 @@ import Boton3 from '@/components/Button3';
 
 function index() {
     
+    const [libroAct, setLibroAct] = useState();
+
+    useEffect(() => {
+        const newLibroAct = JSON.parse(localStorage.getItem('LibroActual'));
+        setLibroAct(newLibroAct)
+        console.log(libroAct)
+        console.log('aaa')
+    }, [])
+
     return (
         <>
             <div className={styles.megaConte}>
@@ -29,14 +38,19 @@ function index() {
                             <div className={styles.subSubMegaConte2}>
                                 <h1>Citas</h1>
                                 <Divider />
-                                <DetalleLibro 
-                                    Titulo='Primer Libro'
-                                    Autor='Primer Autor'
-                                    Estado='Disponible'
-                                    FotoUrl='https://images.cdn2.buscalibre.com/fit-in/180x180/1f/a6/1fa666e0f93fb0bc63c4c214188f3a46.jpg'
-                                    Parrafo= 'Este libro sólo tiene un objetivo principal: provocar el inicio de un nuevo campo de estudio: la programación informática como actividad humana o, en pocas palabras, la psicología de la programación informática. Todos los demás objetivos están subordinados a éste. Por ejemplo, he intentado que el libro sea interesante y no técnico, en la medida de lo posible, para animar al mayor número posible de personas a leerlo: no sólo programadores, sino gestores de programación y otras personas relacionadas con la programación en las muchas formas en que estamos relacionados con la programación hoy en día. Lo que intento conseguir es que el lector diga, al terminar el libro: "Sí, la programación no es sólo una cuestión de hardware y software. A partir de ahora tendré que ver las cosas de otra manera".'
-                                    NombreEditorial='Editorial 1'
-                                />
+                                {
+                                    libroAct && (
+                                        <DetalleLibro 
+                                        Titulo={libroAct?.Titulo}
+                                        Autor={libroAct?.Autor}
+                                        Estado={libroAct?.Estado ? 'Disponible' : 'Reservado'}
+                                        FotoUrl={libroAct?.Foto}
+                                        Parrafo='La descripción de este libro es capaz de describir el contenido de este libro, usando una cantidad limitad de palabras. Esto le permite dar a enteder lo que esta insignia busca transmitir. Usualmente, pasada por alto; sin embargo, son muchos los que se guién y adquieren un libro a través de este corto, pero significativo texto. No muchos entienden las maravillas que transmiten estas cortas palabras, te queremos mucho: Párrafo'
+                                        NombreEditorial={libroAct?.Editor}
+                                        Topico={libroAct?.Topico}
+                                        />
+                                    )
+                                }
                             </div>
                         </div>
                     </div>

@@ -4,19 +4,12 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import styles from './Pagination.module.css'
 
-function Pagination2({maxPage}) {
+function Pagination2({maxPage, onPageChange }) {
     const [page, setPage] = React.useState(1);
-
-    useEffect(() => {
-    const storedPage = localStorage.getItem('currentPage');
-    if (storedPage) {
-        setPage(parseInt(storedPage, 10));
-    }
-    }, []);
 
     const handleChange = (event, value) => {
         setPage(value);
-        localStorage.setItem('currentPage', value);
+        onPageChange(value);
     };
     
     return (

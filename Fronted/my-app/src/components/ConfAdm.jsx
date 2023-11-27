@@ -50,6 +50,7 @@ function ConfAdm() {
                 }
                 window.localStorage.setItem("UsuarioActual", JSON.stringify(actual));
                 window.localStorage.setItem("usuarios", JSON.stringify(usuarios));
+                window.location.reload();
             }
         }
     }
@@ -67,6 +68,7 @@ function ConfAdm() {
                 }
                 window.localStorage.setItem("UsuarioActual", JSON.stringify(actual));
                 window.localStorage.setItem("usuarios", JSON.stringify(usuarios));
+                window.location.reload();
             }
             
         }
@@ -89,6 +91,7 @@ function ConfAdm() {
                 }
                 window.localStorage.setItem("UsuarioActual", JSON.stringify(actual));
                 window.localStorage.setItem("usuarios", JSON.stringify(usuarios));
+                window.location.reload();
             }
         }
     }

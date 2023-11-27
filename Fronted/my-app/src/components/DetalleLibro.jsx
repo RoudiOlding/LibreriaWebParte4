@@ -5,7 +5,7 @@ import { purple } from '@mui/material/colors';
 import Chip2 from './Chip';
 import Chip3 from './Chip2';
 
-function DetalleLibro({Titulo, Autor, Estado, FotoUrl, Parrafo, NombreEditorial}) {
+function DetalleLibro({Titulo, Autor, Estado, FotoUrl, Parrafo, NombreEditorial, Topico}) {
 
     const TituloIniciales = Titulo
         .split(' ')
@@ -13,6 +13,8 @@ function DetalleLibro({Titulo, Autor, Estado, FotoUrl, Parrafo, NombreEditorial}
         .map(word => word.charAt(0).toUpperCase())
         .join('');
 
+    //Traer el libro actual
+    //Usar ese libro actual
     return (
         <>
             <div className={styles.detallesLibro}>
@@ -48,8 +50,7 @@ function DetalleLibro({Titulo, Autor, Estado, FotoUrl, Parrafo, NombreEditorial}
                                 <div className={styles.subDetalle3}>
                                     <p className={styles.topicos}>Tópicos</p>
                                     <div className={styles.subSubDetalle3}>
-                                        <Chip3 texto='Tópico 1' />
-                                        <Chip3 texto='Tópico 2' />
+                                        <Chip3 texto={Topico} />
                                     </div>
                                 </div>
             </div>

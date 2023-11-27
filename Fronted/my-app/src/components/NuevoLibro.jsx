@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -9,11 +9,41 @@ import BasicButtons2 from './Button2';
 import Alerts from './Alerts';
 
 function NuevoLibro() {
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = useState('1');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const [libros, setLibros] = useState([]);
+
+    useEffect(() => {
+        let newLibros = JSON.parse(localStorage.getItem("libros"));
+        setLibros(newLibros)
+    }, [])
+
+    const libro = {
+        titulo: "",
+        autor: "",
+        ISBN13: "",
+        editorial: "",
+        FotoLibro: "",
+        disponibilidad: true,
+        pedido: 0,
+        id: libros.length
+    }
+
+    const [libroNuevo, setNuevoLibro] = useState(libro);
+
+    const handleGuardar = () => {
+        //Guardar el libro en el local storage
+        setLibros([...libros, libroNuevo])
+        window.location.reload();
+    };
+
+    useEffect(() => {
+        localStorage.setItem("libros", JSON.stringify(libros));
+    }, [libros])
 
     return (
         <Box sx={{ width: '100%', typography: 'body1', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -72,24 +102,41 @@ function NuevoLibro() {
                 </Box>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
                     <TabPanel value="1" sx={{ width: '100%' }}>
-                        <div>
+                        <div
+                            onChange={event => setNuevoLibro({...libroNuevo, titulo: event.target.value})}
+                            value={libroNuevo.titulo}
+                        >
                             <Textfield texto='Título' />
                         </div>
-                        <div>
+                        <div
+                            onChange={event => setNuevoLibro({...libroNuevo, autor: event.target.value})}
+                            value={libroNuevo.autor}
+                        >
                             <Textfield texto='Autor, autores' />
                         </div>
-                        <div>
+                        <div
+                            onChange={event => setNuevoLibro({...libroNuevo, ISBN13: event.target.value})}
+                            value={libroNuevo.ISBN13}
+                        >
                             <Textfield texto='ISBN' />
                         </div>
-                        <div>
-                            <Textfield texto='Serie, tipo' />
+                        <div
+                            onChange={event => setNuevoLibro({...libroNuevo, editorial: event.target.value})}
+                            value={libroNuevo.editorial}
+                        >
+                            <Textfield texto='Editorial' />
                         </div>
-                        <div>
+                        <div
+                            onChange={event => setNuevoLibro({...libroNuevo, FotoLibro: event.target.value})}
+                            value={libroNuevo.FotoLibro}
+                        >
                             <Textfield texto='Imagen (url)' />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
+                        <div 
+                            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}
+                        >
                             <Alerts titulo='Registro completo' subtexto='La recurso ha sido grabado con éxito' 
-                                estilo='outlined' accion1='Insertar'/>
+                                estilo='outlined' accion1='Insertar' onEnviar={handleGuardar} />
                         </div>
                     </TabPanel>
                 </div>

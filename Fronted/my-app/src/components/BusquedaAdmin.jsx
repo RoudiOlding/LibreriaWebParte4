@@ -3,7 +3,12 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 
-function BusquedaAdmin() {
+function BusquedaAdmin({onBuscarCargado}) {
+    const handleBuscarCargado = (event) => {
+        const buscarItem = event.target.value;
+        onBuscarCargado(buscarItem);
+    }
+
     return (
         <Box
             component="form"
@@ -18,6 +23,7 @@ function BusquedaAdmin() {
                 label="Ingresa la palabra clave"
                 variant="outlined"
                 color='secondary'
+                onChange={handleBuscarCargado}
                 InputProps={{
                     startAdornment: (
                         <SearchIcon sx={{ color: '#6750A4', mr: 1 }} /> // Ajusta el color y el espacio según tus necesidades

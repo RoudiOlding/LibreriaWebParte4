@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-function Alerts({titulo, subtexto, estilo, accion1, ancho}) {
+function Alerts({titulo, subtexto, estilo, accion1, ancho, onEnviar}) {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -71,7 +71,11 @@ function Alerts({titulo, subtexto, estilo, accion1, ancho}) {
                         fontWeight: '20px',
                     }}
                 >
-                Ok
+                <div
+                    onClick={onEnviar}    
+                >
+                    Ok
+                </div>
                 </Button>
             </DialogActions>
             </Dialog>

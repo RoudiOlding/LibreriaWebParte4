@@ -50,12 +50,16 @@ export default function Home() {
 
   // Cargar y almacenar libros desde el archivo JSON
     useEffect(() => {
-      fetch("/data/newLibrary.json")
+      let libros = localStorage.getItem("libros");
+
+      if(!libros){
+        fetch("/data/newLibrary.json")
         .then(response => response.json())
         .then(data => {
           localStorage.setItem("libros", JSON.stringify(data));
         })
         .catch(error => console.error("Error al cargar el archivo JSON de libros:", error));
+      }
     }, []);
   
   const [UsuariosCapturados, setCapturados] = useState([]);
