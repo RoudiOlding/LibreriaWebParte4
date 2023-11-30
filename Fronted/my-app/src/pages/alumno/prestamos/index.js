@@ -55,6 +55,7 @@ function index() {
 
     useEffect(() => {
         console.log(resultado);
+        console.log('Cambio ejemplo')
     }, [resultado]);
 
     useEffect(() => {
