@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import { purple } from '@mui/material/colors';
 import styles from './SemiLibro.module.css';
 
-function SemiLibro({ Titulo, Fecha }) {
+function SemiLibro({ Titulo, Fecha, Foto }) {
     const TituloIniciales = Titulo
         .split(' ')
         .slice(0, 2)
@@ -30,7 +30,7 @@ function SemiLibro({ Titulo, Fecha }) {
         <CardMedia
             component="img"
             className={styles.cardImage}
-            image="https://images.cdn2.buscalibre.com/fit-in/180x180/1f/a6/1fa666e0f93fb0bc63c4c214188f3a46.jpg"
+            image={Foto}
             alt="Imagen"
         />
         </Card>

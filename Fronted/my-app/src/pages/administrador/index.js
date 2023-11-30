@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import TopAppBar from '@/components/TopBar'
 import styles from './index.module.css'
 import Link from 'next/link'
 import { Divider } from '@mui/material';
 import SemiLibro from '@/components/SemiLibro';
+import { Newsreader } from 'next/font/google';
 
 function index() {
 
     const [nombreUser, setNombreUser] = useState('');
+    const [librosPedidos, setLibrosPedidos] = useState([]);
+    const [librosReservas, setlibrosReservas] = useState([]);
 
     useEffect(() => {
         let constUsuario = localStorage.getItem('UsuarioActual');
@@ -18,7 +21,43 @@ function index() {
             console.error('No se encontró el usuario en el local storage.');
         }
     }, []);
+
+
+    useEffect(() => {
+        let listLibro = JSON.parse(localStorage.getItem("libros"));
+        if(listLibro){
+            listLibro.sort((a, b) => b.pedidos + a.pedidos);
+            const first2books = listLibro.slice(0,2);
+            setLibrosPedidos(first2books);
+            console.log("Se guardaron los libros");
+        }else{
+            console.error("No hay libros");
+        }
+    }, [])
+
+    useEffect(() => {
+        let listLibro = JSON.parse(localStorage.getItem("libros"));
+        if(listLibro){
+            const fechaActual = new Date();
+
+            listLibro.sort((a, b) => {
+                const fechaA = new Date(a.FechaDevolucion);
+                const fechaB = new Date(b.FechaDevolucion);
+
+                return fechaA - fechaActual - (fechaB - fechaActual);
+            })
+
+            const first2books = listLibro.slice(0,2);
+            setlibrosReservas(first2books);
+            console.log("Se guardaron los libros");
+        }else{
+            console.error("No hay libros");
+        }
+    },[])
     
+    const pedidoCero = librosPedidos.every(x => x.pedidos === 0);
+    const fechaVacia = librosReservas.every(x => x.FechaDevolucion !== '');
+
     return (
         <>
             <div className={styles.megaConte}>
@@ -42,19 +81,42 @@ function index() {
                             <div className={styles.megaConte3}>
                                 <div className={styles.subMegaConte3}>
                                     <p className={styles.subSubTitulo}>Últimas Reservas</p>
-                                    <p className={styles.subSubTexto}>No hay reservas</p>
+                                    
                                     <div className={styles.miniLibro}>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
+                                        {librosReservas.length > 0 ? (
+                                            fechaVacia ? (
+                                                <p className={styles.subSubTexto}>No hay reservas</p>
+                                            ): (
+                                            librosReservas.map(x => (
+                                                <>
+                                                    <SemiLibro Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro}/>
+                                                    <Link to="/administrador/bibleoteca" className={styles.verTodo}>
+                                                        Ver todo
+                                                    </Link>
+                                                </>
+                                            ))                                         
+                                        )): (
+                                            <p className={styles.subSubTexto}>No existen libros</p>
+                                        )}
+                                        
                                     </div>
-                                    <p className={styles.verTodo}>Ver todo</p>
+                                    
                                 </div>
                                 <div className={styles.subMegaConte3}>
                                     <p className={styles.subSubTitulo}>Los más pedidos</p>
-                                    <p className={styles.subSubTexto}>No hay data de pedidos</p>
+                                    
                                     <div className={styles.miniLibro}>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
+                                        {librosPedidos.length > 0 ? (
+                                            pedidoCero ? (
+                                                <p className={styles.subSubTexto}>No hay libros más pedidos</p>
+                                            ): (
+                                                librosPedidos.map(x => (
+                                                    <SemiLibro Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro}/>
+                                                ))
+                                            )       
+                                        ): (
+                                            <p className={styles.subSubTexto}>No exiten libros </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

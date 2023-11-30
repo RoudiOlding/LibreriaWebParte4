@@ -3,7 +3,14 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 
-function BusquedaAlum({titulo, ancho}) {
+function BusquedaAlum({titulo, ancho, setClave}) {
+
+    const handleInputChange = (event) => {
+        if (typeof setClave === 'function') {
+            setClave(event.target.value);
+        }
+    };
+
     return (
         <Box
             component="form"
@@ -18,6 +25,7 @@ function BusquedaAlum({titulo, ancho}) {
                 label={titulo}
                 variant="outlined"
                 color='secondary'
+                onChange={handleInputChange}
                 InputProps={{
                     startAdornment: (
                         <SearchIcon sx={{ color: '#6750A4', mr: 1 }} /> // Ajusta el color y el espacio según tus necesidades
