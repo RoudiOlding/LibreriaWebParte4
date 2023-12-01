@@ -54,23 +54,16 @@ function index() {
             console.error("No hay libros");
         }
     },[])
-    async function fetchLastBookings() {
-        try {
-            const resp = await fetch("http://localhost:3100/api/student/getLastBookings", {
-                method: "GET"
-            });
-            if (resp.ok) {
-                const data = await resp.json();
-                setlibrosReservas(data);
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-            // Puedes manejar el error de acuerdo a tu lógica
-        }
+    
+    async function fetchLastBookings(){
+        const resp = await fetch("http://localhost:3100/api/student/getLastBookings",{
+            method:"GET"
+        })
+        const a = await resp.json()
+        console.log(a)
+        setlibrosReservas(a)
     }
-      
+
     useEffect(() =>{
         fetchLastBookings()
     },[])
