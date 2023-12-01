@@ -10,7 +10,7 @@ import BasicButtons2 from './Button2';
 function ConfAdm() {
     const [value, setValue] = useState('1');
 
-    const handleChange = (newValue) => {
+    const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
