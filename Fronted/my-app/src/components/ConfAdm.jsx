@@ -10,7 +10,7 @@ import BasicButtons2 from './Button2';
 function ConfAdm() {
     const [value, setValue] = useState('1');
 
-    const handleChange = (event, newValue) => {
+    const handleChange = (newValue) => {
         setValue(newValue);
     };
 
@@ -26,12 +26,30 @@ function ConfAdm() {
     const [usuarios, setUsuarios] = useState([]);
     const [actual, setActual] = useState();
 
-    useEffect(() => {
+    useEffect(() => { 
+        fetch("http://localhost:3100/api/student/getVisualiseAdministrator/:id")
+            .then(response=>response.json())
+            .then(data=>{
+                if(data.result){
+                    setNombre(data.result.name || '');
+                    setApellido(data.result.lastName || '');
+                    setCorreo(data.result.email || '');
+                    setContraseña(data.result.password || '');
+                    setNroDocumento(data.result.identityDoc || '');
+                }
+                               
+            })
+            .catch(error => {
+                // Manejar errores de la petición fetch
+                console.error('Error fetching data:', error);
+                // Aquí puedes establecer valores predeterminados o manejar el error de otra manera
+            });
         let newUsuarios = JSON.parse(localStorage.getItem("usuarios"));
         let newActual = JSON.parse(localStorage.getItem("UsuarioActual"))
         setUsuarios(newUsuarios)
         setActual(newActual)
-    }, [])
+        
+    },[] )
 
     const boton1 = () => {
         for(var i = 0; i < usuarios.length; i++){
@@ -157,9 +175,9 @@ function ConfAdm() {
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
                     <TabPanel value="1" sx={{ width: '100%' }}>
                         <div
-                            onChange={event => setNombre(event.target.value)}
+                           onChange={event => setNombre(event.target.value)}
                         >
-                            <Textfield texto='Nombres' />
+                            <Textfield texto='Nombres'  />
                         </div>
                         <div
                             onChange={event => setApellido(event.target.value)}
