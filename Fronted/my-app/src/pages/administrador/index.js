@@ -48,16 +48,29 @@ function index() {
             })
 
             const first2books = listLibro.slice(0,2);
-            setlibrosReservas(first2books);
+            //setlibrosReservas(first2books);
             console.log("Se guardaron los libros");
         }else{
             console.error("No hay libros");
         }
     },[])
     
-    const pedidoCero = librosPedidos.every(x => x.pedidos === 0);
-    const fechaVacia = librosReservas.every(x => x.FechaDevolucion !== '');
+    async function fetchLastBookings(){
+        const resp = await fetch("http://localhost:3100/api/student/getLastBookings",{
+            method:"GET"
+        })
+        const a = await resp.json()
+        console.log(a)
+        setlibrosReservas(a)
+    }
 
+    useEffect(() =>{
+        fetchLastBookings()
+    },[])
+
+    const pedidoCero = librosPedidos.every(x => x.pedidos === 0);
+    //const fechaVacia = librosReservas.every(x => x.FechaDevolucion !== '');
+    //<SemiLibro Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro}/>
     return (
         <>
             <div className={styles.megaConte}>
@@ -84,19 +97,19 @@ function index() {
                                     
                                     <div className={styles.miniLibro}>
                                         {librosReservas.length > 0 ? (
-                                            fechaVacia ? (
-                                                <p className={styles.subSubTexto}>No hay reservas</p>
-                                            ): (
-                                            librosReservas.map(x => (
-                                                <>
-                                                    <SemiLibro Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro}/>
-                                                    <Link to="/administrador/bibleoteca" className={styles.verTodo}>
+                                            
+                                            librosReservas.map((x,i) => (
+                                                <div key={i}>
+                                                    <div>fecha de fin: {x.endDate}</div> 
+                                                    <div>id de libro: {x.BookId}</div>
+                                                    <Link href="/administrador/bibleoteca" className={styles.verTodo}>
                                                         Ver todo
                                                     </Link>
-                                                </>
+                                                </div>
                                             ))                                         
-                                        )): (
-                                            <p className={styles.subSubTexto}>No existen libros</p>
+                                        ): (
+                                            //<p className={styles.subSubTexto}>No existen libros</p>
+                                            <p className={styles.subSubTexto}>No hay reservas</p>
                                         )}
                                         
                                     </div>
@@ -110,9 +123,9 @@ function index() {
                                             pedidoCero ? (
                                                 <p className={styles.subSubTexto}>No hay libros más pedidos</p>
                                             ): (
-                                                librosPedidos.map(x => (
-                                                    <SemiLibro Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro}/>
-                                                ))
+                                                <div>
+                                                    hola
+                                                </div>
                                             )       
                                         ): (
                                             <p className={styles.subSubTexto}>No exiten libros </p>
