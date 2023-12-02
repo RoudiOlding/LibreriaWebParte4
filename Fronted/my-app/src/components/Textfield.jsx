@@ -4,12 +4,13 @@ import TextField from '@mui/material/TextField';
 import styles from './Textfield.module.css'
 import { colors } from '@mui/material';
 
-function Textfield({texto, isPassword = false }) {
+function Textfield({texto, onChange, isPassword = false }) {
     return (
         <TextField 
         className={`${styles.textField} ${styles.Textfield_textField}`} 
         id="outlined-basic"
         label= {texto}
+        onChange={onChange}
         variant="outlined"
         color='secondary'
         autoComplete={isPassword ? "new-password" : "off"}

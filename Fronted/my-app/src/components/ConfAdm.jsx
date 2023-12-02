@@ -8,12 +8,39 @@ import Textfield from './Textfield';
 import BasicButtons2 from './Button2';
 
 function ConfAdm() {
+    
+    const actualizarDatosPersonales = async () => {
+        try {
+          const response = await fetch("http://localhost:3100/api/student/getUpdateAdministrator/", {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: actual.Id,
+              name: nombre,
+              lastName: apellido,
+              identityDoc: nroDocumento,
+            }),
+          });
+      
+          if (!response.ok) {
+            throw new Error('Error en la actualización');
+          }
+      
+          
+          console.log("Datos personales actualizados con éxito");
+        } 
+        catch (error) {
+          console.error('Error en la actualización:', error);
+          
+        }
+    }
     const [value, setValue] = useState('1');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-
     const [nombre, setNombre] = useState();
     const [apellido, setApellido] = useState();
     const [nroDocumento, setNroDocumento] = useState();
@@ -31,13 +58,14 @@ function ConfAdm() {
             .then(response=>response.json())
             .then(data=>{
                 if(data.result){
-                    setNombre(data.result.name || '');
-                    setApellido(data.result.lastName || '');
-                    setCorreo(data.result.email || '');
-                    setContraseña(data.result.password || '');
-                    setNroDocumento(data.result.identityDoc || '');
-                }
-                               
+                    if(data.result){
+                        setNombre(data.result.name || '');
+                        setApellido(data.result.lastName || '');
+                        setCorreo(data.result.email || '');
+                        setContraseña(data.result.password || '');
+                        setNroDocumento(data.result.identityDoc || '');
+                    }
+                }                               
             })
             .catch(error => {
                 // Manejar errores de la petición fetch
@@ -50,8 +78,9 @@ function ConfAdm() {
         setActual(newActual)
         
     },[] )
+    
 
-    const boton1 = () => {
+    const boton1 = async () => {        
         for(var i = 0; i < usuarios.length; i++){
             if(usuarios[i].Id == actual.Id){
                 if(nombre != undefined){
@@ -63,8 +92,8 @@ function ConfAdm() {
                     usuarios[i].Appelido = apellido;
                 }
                 if(nroDocumento != undefined){
-                    actual.NroDoc = nroDocumento;
-                    usuarios[i].NroDoc = nroDocumento;
+                        actual.NroDoc = nroDocumento;
+                        usuarios[i].NroDoc = nroDocumento;
                 }
                 window.localStorage.setItem("UsuarioActual", JSON.stringify(actual));
                 window.localStorage.setItem("usuarios", JSON.stringify(usuarios));
@@ -113,7 +142,7 @@ function ConfAdm() {
             }
         }
     }
-
+    
     return (
         <Box sx={{ width: '100%', typography: 'body1', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <TabContext value={value}>
@@ -172,12 +201,13 @@ function ConfAdm() {
                         <Tab label="Preferencias" value="3" />
                     </TabList>
                 </Box>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}
+                    onClick={actualizarDatosPersonales}>                                     
                     <TabPanel value="1" sx={{ width: '100%' }}>
                         <div
                            onChange={event => setNombre(event.target.value)}
                         >
-                            <Textfield texto='Nombres'  />
+                            <Textfield texto='Nombres'  onChange={(e) => setNombre(e.target.value)} />
                         </div>
                         <div
                             onChange={event => setApellido(event.target.value)}
@@ -242,6 +272,9 @@ function ConfAdm() {
             </TabContext>
         </Box>
     );
+                
+
+
 }
 
 export default ConfAdm
