@@ -12,49 +12,7 @@ function index() {
     const [librosPedidos, setLibrosPedidos] = useState([]);
     const [librosReservas, setlibrosReservas] = useState([]);
 
-    useEffect(() => {
-        let constUsuario = localStorage.getItem('UsuarioActual');
-        if (constUsuario) {
-            const usuario = JSON.parse(constUsuario);
-            setNombreUser(usuario.Nombre);
-        } else {
-            console.error('No se encontró el usuario en el local storage.');
-        }
-    }, []);
 
-
-    useEffect(() => {
-        let listLibro = JSON.parse(localStorage.getItem("libros"));
-        if(listLibro){
-            listLibro.sort((a, b) => b.pedidos + a.pedidos);
-            const first2books = listLibro.slice(0,2);
-            setLibrosPedidos(first2books);
-            console.log("Se guardaron los libros");
-        }else{
-            console.error("No hay libros");
-        }
-    }, [])
-
-    useEffect(() => {
-        let listLibro = JSON.parse(localStorage.getItem("libros"));
-        if(listLibro){
-            const fechaActual = new Date();
-
-            listLibro.sort((a, b) => {
-                const fechaA = new Date(a.FechaDevolucion);
-                const fechaB = new Date(b.FechaDevolucion);
-
-                return fechaA - fechaActual - (fechaB - fechaActual);
-            })
-
-            const first2books = listLibro.slice(0,2);
-            //setlibrosReservas(first2books);
-            console.log("Se guardaron los libros");
-        }else{
-            console.error("No hay libros");
-        }
-    },[])
-    
     async function fetchLastBookings(){
         const resp = await fetch("http://localhost:3100/api/student/getLastBookings",{
             method:"GET"
@@ -68,9 +26,20 @@ function index() {
         fetchLastBookings()
     },[])
 
-    const pedidoCero = librosPedidos.every(x => x.pedidos === 0);
-    //const fechaVacia = librosReservas.every(x => x.FechaDevolucion !== '');
-    //<SemiLibro Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro}/>
+    async function fetchMostRequestedBooks(){
+        const resp = await fetch("http://localhost:3100/api/student/getMostRequestedBooks",{
+            method:"GET"
+        })
+        const a = await resp.json()
+        console.log(a)
+        setLibrosPedidos(a)
+    }
+
+    useEffect(() =>{
+        fetchMostRequestedBooks()
+    },[])
+
+    
     return (
         <>
             <div className={styles.megaConte}>
@@ -96,19 +65,17 @@ function index() {
                                     <p className={styles.subSubTitulo}>Últimas Reservas</p>
                                     
                                     <div className={styles.miniLibro}>
-                                        {librosReservas.length > 0 ? (
-                                            
+                                        {librosReservas.length > 0 ? (   
                                             librosReservas.map((x,i) => (
                                                 <div key={i}>
-                                                    <div>fecha de fin: {x.endDate}</div> 
-                                                    <div>id de libro: {x.BookId}</div>
+                                                    <div>Fecha solicitud: {x.createdAt}</div>
+                                                    <div>Fecha inicio: {x.startDate}</div> 
                                                     <Link href="/administrador/bibleoteca" className={styles.verTodo}>
                                                         Ver todo
                                                     </Link>
                                                 </div>
                                             ))                                         
                                         ): (
-                                            //<p className={styles.subSubTexto}>No existen libros</p>
                                             <p className={styles.subSubTexto}>No hay reservas</p>
                                         )}
                                         
@@ -120,15 +87,21 @@ function index() {
                                     
                                     <div className={styles.miniLibro}>
                                         {librosPedidos.length > 0 ? (
-                                            pedidoCero ? (
-                                                <p className={styles.subSubTexto}>No hay libros más pedidos</p>
-                                            ): (
-                                                <div>
-                                                    hola
+                                            librosPedidos.map((x,i) => (
+                                                <div key={i}>
+                                                    <div>Título: {x.titulo}</div>
+                                                    <div>Link de foto: {x.photobook}</div> 
+                                                    <div>Isbn: {x.isbn13}</div>
+                                                    <div>Editorial: {x.editorial}</div>
+                                                    <div>Autor: {x.author}</div>
+                                                    <div>Disponibilidad: {x.availability}</div>
+                                                    <Link href="/administrador/bibleoteca" className={styles.verTodo}>
+                                                        Ver todo
+                                                    </Link>
                                                 </div>
-                                            )       
+                                            )) 
                                         ): (
-                                            <p className={styles.subSubTexto}>No exiten libros </p>
+                                            <p className={styles.subSubTexto}>No existen libros </p>
                                         )}
                                     </div>
                                 </div>
