@@ -13,9 +13,11 @@ import Libro2 from '@/components/Libro2';
 
 function index() {
     const [nombreUser, setNombreUser] = useState('');
-
+    const [ini, setIni] = useState(1)
+    
     useEffect(() => {
         let constUsuario = localStorage.getItem('UsuarioActual');
+        setIni(localStorage.getItem('currentPage'))
         if (constUsuario) {
             const usuario = JSON.parse(constUsuario);
             setNombreUser(usuario.Nombre);
@@ -25,27 +27,43 @@ function index() {
     }, []);
 
     const [libros, setLibros] = useState([]);
+    const [librosMostrar, setLibrosMostrar] = useState([]);
+    const [maxPages, setMaxPages] = useState(1);
+    const [startPage, setStartPage] = useState(1);
 
-        const getDataFromLocalStorage = () => {
-        try {
-            const librosLocal = localStorage.getItem('libros');
-            if (librosLocal) {
-            const nuevosLibros = JSON.parse(librosLocal);
-            setLibros(nuevosLibros);
-            }
-        } catch (error) {
-            console.error('Error: ', error);
-        }
-        };
+    useEffect(() => {
+        let newLibros = JSON.parse(localStorage.getItem("filtro"));
+        setLibros(newLibros)
+    }, [])
     
-        useEffect(() => {
-            getDataFromLocalStorage();
-        }, [])
-    
-        console.log(libros.length)
-    
-        const numpages = Math.ceil(libros.length / 3);
-    
+    const mostrarLibros = (start) => {
+        let iniPage = start * 3;
+        let maxPage = iniPage + 3;
+
+        let filteredLibros = libros;
+
+        const slice1 = filteredLibros.slice(iniPage, maxPage);
+        setLibrosMostrar(slice1);
+
+        let oldMaxPages = Math.ceil(filteredLibros.length / 3);
+        setMaxPages(oldMaxPages);
+    }
+
+    const P3reload = () => {
+        location.href = '/alumno/prestamos';
+    }
+
+    useEffect(() => {
+        //Aquí poner la página actual obtenido
+        let currentPage = startPage -1;
+        mostrarLibros(currentPage)
+    }, [startPage, libros]) //Aquí colocar cada que cambie la página del pagination, para que se cargue todo
+
+    const handlePageChange = (newStartPage) => {
+        setStartPage(newStartPage);
+    };
+
+
     return (
         <>
             <div className={styles.megaConte}>
@@ -67,7 +85,7 @@ function index() {
                         <div className={styles.subMegaConte2}>
                             <div className={styles.conteAgregar}>
                                 <h1>Búsqueda - Resultados</h1>
-                                <div className={styles.subConteAgregar2}>
+                                <div className={styles.subConteAgregar2} onClick={P3reload}>
                                     <Boton3 texto='Volver a buscar' estilo='contained'/>
                                 </div>
                             </div>
@@ -77,13 +95,24 @@ function index() {
                                 <Boton2 texto='Ver mis reservas' estilo='outlined'/>
                             </div>
                             <div className={styles.conteAgregar3}>
-                                <LibroFinalSeasson Titulo='Libro Numero 1' Isbn='11111111' Autor='Autor 1' Editor= 'Editor 1'/>
-                                <LibroFinalSeasson Titulo='Libro Numero 2' Isbn='22222222' Autor='Autor 2' Editor= 'Editor 2'/>
-                                <LibroFinalSeasson Titulo='Libro Numero 3' Isbn='33333333' Autor='Autor 3' Editor= 'Editor 3'/>
+                                {librosMostrar.map((libro) => (
+                                    <LibroFinalSeasson 
+                                    Titulo={libro.titulo}
+                                    Isbn={libro.ISBN13}
+                                    Autor={libro.autor}
+                                    Foto={libro.FotoLibro}
+                                    Editor={libro.editorial}
+                                    LibroId={libro.id}
+                                    Estado={libro.disponibilidad}
+                                    Editorial={libro.editorial}
+                                    Topico={libro.categoria}
+                                    />
+                                    ))
+                                }
                             </div>
                         </div>
                         <div>
-                            <Pagination2 maxPage= {numpages} />
+                            <Pagination2 maxPage= {maxPages} onPageChange={handlePageChange}/>
                         </div>
                     </div>
                 </div>

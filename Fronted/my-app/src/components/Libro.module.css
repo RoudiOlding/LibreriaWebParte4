@@ -41,6 +41,22 @@
 .reservar{
     margin-top: 25px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+}
+
+.contenedor{
+    display: flex;
+}
+
+.Fav{
+    display: flex;
+    justify-content: center;
+    height: 100;
+    margin-left: 2px;
+}
+
+.moreInfo {
+    cursor: pointer;
 }

@@ -29,7 +29,7 @@ function NuevoLibro() {
         editorial: "",
         FotoLibro: "",
         disponibilidad: true,
-        pedido: 0,
+        pedidos: 0,
         id: libros.length
     }
 
@@ -37,7 +37,9 @@ function NuevoLibro() {
 
     const handleGuardar = () => {
         //Guardar el libro en el local storage
-        setLibros([...libros, libroNuevo])
+        const nuevoId = libros.length + 1;
+        const nuevoLibroConId = { ...libroNuevo, id: nuevoId };
+        setLibros([...libros, nuevoLibroConId])
         window.location.reload();
     };
 

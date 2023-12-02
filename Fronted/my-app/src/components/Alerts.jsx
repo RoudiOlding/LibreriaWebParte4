@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-function Alerts({titulo, subtexto, estilo, accion1, ancho, onEnviar}) {
+function Alerts({titulo, subtexto, estilo, accion1, ancho, onEnviar, reservarLibro}) {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -14,7 +14,9 @@ function Alerts({titulo, subtexto, estilo, accion1, ancho, onEnviar}) {
     };
 
     const handleClose = () => {
-    setOpen(false);
+        setOpen(false);
+        reservarLibro()
+        window.location = '/alumno'
     };
 
     return (

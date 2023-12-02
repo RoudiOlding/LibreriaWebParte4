@@ -8,16 +8,34 @@ import SemiLibro from '@/components/SemiLibro';
 function index() {
 
     const [nombreUser, setNombreUser] = useState('');
+    const [librosUserReserv, setLibrosUserReserv] = useState([]);
+    const [librosUserProx, setLibrosUserProx] = useState([]);
 
     useEffect(() => {
         let constUsuario = localStorage.getItem('UsuarioActual');
         if (constUsuario) {
             const usuario = JSON.parse(constUsuario);
+            const librosPrestados = usuario.librosPrestados;
+            if(librosPrestados){
+                const reserv = [...librosPrestados].sort((a, b) => new Date(b.FechaDevolucion) - new Date(a.FechaDevolucion));
+                const prox = [...librosPrestados].sort((a, b) => new Date(a.FechaDevolucion) - new Date(b.FechaDevolucion));
+                const first2bookReserv = reserv.slice(1,3);
+                const first2bookProx = prox.slice(1,3);
+                setLibrosUserReserv(first2bookReserv);
+                setLibrosUserProx(first2bookProx);
+            }else{
+                console.error("No hay libros");
+            }
             setNombreUser(usuario.Nombre);
         } else {
             console.error('No se encontró el usuario en el local storage.');
         }
     }, []);
+
+    useEffect(() => {
+        console.log(librosUserReserv)
+        console.log(librosUserProx)
+    }, [librosUserReserv, librosUserProx ])
     
     return (
         <>
@@ -43,21 +61,37 @@ function index() {
                             <div className={styles.megaConte3}>
                                 <div className={styles.subMegaConte3}>
                                     <p className={styles.subSubTitulo}>Últimas Reservas</p>
-                                    <p className={styles.subSubTexto}>No hay reservas</p>
                                     <div className={styles.miniLibro}>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
+                                        {librosUserReserv.length > 0 ? (
+                                            <>
+                                                {librosUserReserv.map((x, index) => (
+                                                    <SemiLibro key={index} Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro} />
+                                                ))}  
+                                            </>
+                                        ) : (
+                                            <p className={styles.subSubTexto}>No existen libros</p>
+                                        )}
                                     </div>
-                                    <div>
-                                        <Link className={styles.verTodo} href='/alumno/misLibros'>Ver todo</Link>
-                                    </div>
+                                    {librosUserReserv.length > 0 ? (
+                                        <div>
+                                            <Link className={styles.verTodo} href='/alumno/misLibros'>Ver todo</Link>
+                                        </div>
+                                        ): (
+                                            ''
+                                        )
+                                    }   
                                 </div>
                                 <div className={styles.subMegaConte3}>
-                                    <p className={styles.subSubTitulo}>Próximos a vencer</p>
-                                    <p className={styles.subSubTexto}>No hay libros pedidos</p>
-                                    <div className={styles.miniLibro}>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
-                                        <SemiLibro Titulo='Shrimp and Chorizo Paella' Fecha='September 15, 2016'/>
+                                    <p className={styles.subSubTitulo}>Próximos a vencer</p>                                    <div className={styles.miniLibro}>
+                                        {librosUserProx.length > 0 ? (
+                                            <>
+                                                {librosUserProx.map((x, index) => (
+                                                    <SemiLibro key={index} Titulo={x.titulo} Fecha={x.FechaDevolucion} Foto={x.FotoLibro} />
+                                                ))}  
+                                            </>
+                                        ) : (
+                                            <p className={styles.subSubTexto}>No hay libros pedidos</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

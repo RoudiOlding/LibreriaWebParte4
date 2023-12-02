@@ -9,6 +9,62 @@ import DataPickerFinal from '@/components/DataPickerFinal';
 import Alerts from '@/components/Alerts';
 
 function index() {
+    const [libroAct, setLibroAct] = useState();
+    const [fecha, setFecha] = useState('');
+    const [libros, setLibros] = useState([]);
+    const [userAct, setUserAct] = useState();
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        const newLibroAct = JSON.parse(localStorage.getItem('LibroActual'));
+        console.log(newLibroAct)
+        setLibroAct(newLibroAct)
+        const newUserAct = JSON.parse(localStorage.getItem('UsuarioActual'))
+        console.log(newUserAct)
+        setUserAct(newUserAct)
+    }, [])
+
+    useEffect(() => {
+        console.log('La fecha nueva es: ' + fecha)
+    }, [fecha])
+
+    const reservarLibro = (id, idUser) => {
+        //Actualizar la listo de libros
+        const newLibros = JSON.parse(localStorage.getItem('libros'));
+        setLibros(newLibros)
+        const libroAfectado = newLibros.find(libro => libro.id === id);
+
+        //Encontrar alumno
+        const newUsuarios = JSON.parse(localStorage.getItem('usuarios'));
+        setUsers(newUsuarios)
+        const usuarioAfectado = newUsuarios.find(usuario => usuario.Id === idUser);
+
+        if(libroAfectado && usuarioAfectado){
+            const nuevosValores = {
+                disponibilidad: false,
+                FechaDevolucion: fecha,
+                pedidos: libroAfectado.pedidos + 1,
+
+            }
+            
+            Object.assign(libroAfectado, nuevosValores);
+
+            const nuevaListaLibros = newLibros.map(libro => (libro.id === id ? libroAfectado : libro));
+            setLibros(nuevaListaLibros);
+            localStorage.setItem('libros', JSON.stringify(nuevaListaLibros));
+
+            usuarioAfectado.librosPrestados.push(libroAfectado);
+            localStorage.setItem('UsuarioActual', JSON.stringify(usuarioAfectado));
+            const nuevaListaUsuarios = newUsuarios.map(usuario => (usuario.Id === idUser ? usuarioAfectado : usuario));
+            setUsers(nuevaListaUsuarios);
+            localStorage.setItem('usuarios', JSON.stringify(nuevaListaUsuarios));
+
+        } else {
+            console.error(`No se encontró ningún libro con el id ${id}`)
+        }
+
+        //Subir el nuevo libro del usuario a su listo de libros
+    }
     
     return (
         <>
@@ -32,26 +88,41 @@ function index() {
                             <div className={styles.subSubMegaConte2}>
                                 <h1>Citas</h1>
                                 <Divider />
-                                <DetalleLibro 
-                                    Titulo='Primer Libro'
-                                    Autor='Primer Autor'
-                                    Estado='Disponible'
-                                    FotoUrl='https://images.cdn2.buscalibre.com/fit-in/180x180/1f/a6/1fa666e0f93fb0bc63c4c214188f3a46.jpg'
-                                    Parrafo= 'Este libro sólo tiene un objetivo principal: provocar el inicio de un nuevo campo de estudio: la programación informática como actividad humana o, en pocas palabras, la psicología de la programación informática. Todos los demás objetivos están subordinados a éste. Por ejemplo, he intentado que el libro sea interesante y no técnico, en la medida de lo posible, para animar al mayor número posible de personas a leerlo: no sólo programadores, sino gestores de programación y otras personas relacionadas con la programación en las muchas formas en que estamos relacionados con la programación hoy en día. Lo que intento conseguir es que el lector diga, al terminar el libro: "Sí, la programación no es sólo una cuestión de hardware y software. A partir de ahora tendré que ver las cosas de otra manera".'
-                                    NombreEditorial='Editorial 1'
-                                />
+                                {
+                                    libroAct && (
+                                        <DetalleLibro 
+                                        Titulo={libroAct?.Titulo}
+                                        Autor={libroAct?.Autor}
+                                        Estado={libroAct?.Estado ? 'Disponible' : 'Reservado'}
+                                        FotoUrl={libroAct?.Foto}
+                                        Parrafo='La descripción de este libro es capaz de describir el contenido de este libro, usando una cantidad limitad de palabras. Esto le permite dar a enteder lo que esta insignia busca transmitir. Usualmente, pasada por alto; sin embargo, son muchos los que se guién y adquieren un libro a través de este corto, pero significativo texto. No muchos entienden las maravillas que transmiten estas cortas palabras, te queremos mucho: Párrafo'
+                                        NombreEditorial={libroAct?.Editor}
+                                        Topico={libroAct?.Topico}
+                                        />
+                                    )
+                                }
                             </div>
                             <div className={styles.reservar}>
-                                <h4 className={styles.tituloReservar}>Reservar</h4>
-                                <DataPickerFinal />
-                                <Alerts
-                                    accion1= 'Reservar'
-                                    estilo='contained'
-                                    ancho='200'
-                                    titulo='Reserva completada'
-                                    subtexto='La reserva del curso se ha realizado
-                                    con éxito. Este debe ser devuelto hasta el día XX/YY/ZZ' 
-                                />
+                                {
+                                    libroAct && libroAct.Estado === true ?  (
+                                        <>
+                                            <h4 className={styles.tituloReservar}>Reservar</h4>
+                                            <DataPickerFinal setFecha={setFecha}/>
+                                            <div>
+                                                <Alerts
+                                                    accion1= 'Reservar'
+                                                    estilo='contained'
+                                                    ancho='200'
+                                                    titulo='Reserva completada'
+                                                    subtexto={`La reserva del curso se ha realizado con éxito. Este debe ser devuelto hasta el día ${fecha}`}
+                                                    reservarLibro={() => reservarLibro(libroAct.id, userAct.Id)}
+                                                />
+                                            </div>
+                                        </>
+                                    ): (
+                                        ''
+                                    )
+                                }
                             </div>
                         </div>
                     </div>

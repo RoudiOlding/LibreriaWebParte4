@@ -9,6 +9,7 @@ import Boton3 from '@/components/Button3';
 import Link from 'next/link';
 
 function Libro({Titulo, Isbn, Foto, Autor, Editor, LibroId, Estado, Editorial, Topico}) {
+    
     const TituloIniciales = Titulo
         .split(' ')
         .slice(0, 2)

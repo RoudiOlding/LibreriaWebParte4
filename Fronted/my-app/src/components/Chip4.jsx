@@ -2,9 +2,9 @@ import * as React from 'react';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 
-function ChipFiltro({texto}) {
+function ChipFiltro({texto, borrar}) {
     const handleDelete = () => {
-        console.info('You clicked the delete icon.');
+        borrar('')
     };
 
     return (

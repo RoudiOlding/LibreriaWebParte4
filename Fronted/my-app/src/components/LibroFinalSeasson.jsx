@@ -8,30 +8,51 @@ import styles from './Libro.module.css'
 import DataPickerAlone from './DataPicker';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import IconButton from '@mui/material/IconButton';
+import FinalButton from './FinalButton';
 
-function LibroFinalSeasson({Titulo, Isbn, Autor, Editor}) {
+function LibroFinalSeasson({Titulo, Isbn, Foto, Autor, Editor, LibroId, Estado, Editorial, Topico}) {
     const TituloIniciales = Titulo
         .split(' ')
         .slice(0, 2)
         .map(word => word.charAt(0).toUpperCase())
         .join('');
 
+    const handleMoreInfo = () => {
+        const libroReservado = {
+            id: LibroId,
+            Titulo,
+            Isbn,
+            Autor,
+            Foto,
+            Editor,
+            Estado,
+            Editorial,
+            Topico
+        };
+        localStorage.setItem('LibroActual', JSON.stringify(libroReservado));
+        location.href = "/alumno/prestamos/resultados/detalles";
+        };
+
     return (
         <>
         <Card sx={{ maxWidth: 360, borderRadius: '15px', border: '0.5px solid #D9D9D9', width: '314px' }}>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: purple[800] }} aria-label="recipe">
+                    <Avatar sx={{ bgcolor: purple[800], display: 'flex', flexWrap: 'wrap'}} aria-label="recipe">
                         {TituloIniciales}
                     </Avatar>
                 }
                 title={
                     <>
-                        <div sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span>{Titulo}</span>
-                            <IconButton aria-label="add to favorites" sx={{ ml: 10 }}>
-                                <FavoriteIcon />
-                            </IconButton>
+                        <div className={styles.contenedor}>
+                            <div>
+                                {Titulo}
+                            </div>
+                            <div className={styles.Fav}>
+                                <IconButton aria-label="add to favorites">
+                                    <FavoriteIcon />
+                                </IconButton>
+                            </div>
                         </div>
                     </>
                 }
@@ -39,7 +60,7 @@ function LibroFinalSeasson({Titulo, Isbn, Autor, Editor}) {
             <CardMedia
                 component="img"
                 height="194"
-                image="/images/pruebaUsuario1.jpg"
+                image={Foto}
                 alt="Paella dish"
             />
             <CardContent>
@@ -51,9 +72,19 @@ function LibroFinalSeasson({Titulo, Isbn, Autor, Editor}) {
                     <span className={styles.editor}>Editor: </span>
                     <span className={styles.editor2}>{Editor}</span> 
                 </p>
-                <div className={styles.reservar}>
-                    <DataPickerAlone />
-                </div>
+                {
+                    Estado == true?
+                        <div className={styles.reservar}>
+                            <DataPickerAlone />
+                            <p onClick={handleMoreInfo} className={styles.moreInfo}>Más información</p>
+                        </div>
+                    :   
+                        <div className={styles.reservar}>
+                            <p>No disponible</p>
+                            <FinalButton texto='RESERVAR'/>
+                            <p onClick={handleMoreInfo} className={styles.moreInfo}>Más información</p>
+                        </div>
+                }
             </CardContent>
         </Card>
         </>
