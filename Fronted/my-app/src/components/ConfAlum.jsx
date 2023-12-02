@@ -22,7 +22,7 @@ function ConfAlumn() {
     }, [])
     const actualizarDatosPersonales = async () => {
         try {
-          const response = await fetch("http://localhost:3100/api/student/getUpdateAdministrator/", {
+          const response = await fetch("http://localhost:3100/api/student/getUpdateStudent/", {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
