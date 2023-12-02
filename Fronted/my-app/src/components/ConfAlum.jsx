@@ -8,6 +8,45 @@ import Textfield from './Textfield';
 import BasicButtons2 from './Button2';
 
 function ConfAlumn() {
+
+
+    
+    useEffect(() => {
+        let oldindex = window.localStorage.getItem("UsuarioActual");
+        let newIndex = JSON.parse(oldindex);
+        if (newIndex && newIndex.Id) {
+            setIndex(newIndex.Id);
+        } else {
+            console.log("No existe el index del alumno");
+        }
+    }, [])
+    const actualizarDatosPersonales = async () => {
+        try {
+          const response = await fetch("http://localhost:3100/api/student/getUpdateAdministrator/", {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: actual.Id,
+              name: nombre,
+              lastName: apellido,
+              identityDoc: nroDocumento,
+            }),
+          });
+      
+          if (!response.ok) {
+            throw new Error('Error en la actualización');
+          }
+      
+          
+          console.log("Datos personales actualizados con éxito");
+        } 
+        catch (error) {
+          console.error('Error en la actualización:', error);
+          
+        }
+    }
     const [value, setValue] = useState('1');
 
     const handleChange = (event, newValue) => {
@@ -31,7 +70,28 @@ function ConfAlumn() {
             console.log("No existe el index del alumno");
         }
     },[])
-
+    useEffect(() => { 
+        fetch("http://localhost:3100//api/student/getVisualiseStudent/:id")
+            .then(response=>response.json())
+            .then(data=>{
+                if(data.result){
+                    if(data.result){
+                        setNombre(data.result.name || '');
+                        setApellido(data.result.lastName || '');
+                        setCorreo(data.result.email || '');
+                        setContraseña(data.result.password || '');
+                        setNroDocumento(data.result.identityDoc || '');
+                    }
+                }                               
+            })
+            .catch(error => {
+                // Manejar errores de la petición fetch
+                console.error('Error fetching data:', error);
+                // Aquí puedes establecer valores predeterminados o manejar el error de otra manera
+            });
+           
+        
+    },[] )
     //Obtener la lista de usuario
     const [usuariosCapturados, setUsuariosCapturados] = useState([]);
     useEffect(()=>{
@@ -64,6 +124,7 @@ function ConfAlumn() {
                 }
                 window.localStorage.setItem("UsuarioActual", JSON.stringify(newActual));     
                 window.localStorage.setItem("usuarios",JSON.stringify(usuariosCapturados))
+                window.location.reload();
             }
         }
     }
@@ -88,6 +149,7 @@ function ConfAlumn() {
                 }
                 window.localStorage.setItem("UsuarioActual", JSON.stringify(newActual));     
                 window.localStorage.setItem("usuarios",JSON.stringify(usuariosCapturados))
+                window.location.reload();
             }
         }
     }
@@ -151,7 +213,8 @@ function ConfAlumn() {
                         <Tab label="Cuenta" value="2" />
                     </TabList>
                 </Box>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '16px' }}
+                    onClick={actualizarDatosPersonales}> 
                     <TabPanel value="1" sx={{ width: '100%' }}>
                         <div 
                             onChange={event => setNombre(event.target.value)}
