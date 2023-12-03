@@ -9,8 +9,9 @@ import DataPickerAlone from './DataPicker';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import IconButton from '@mui/material/IconButton';
 import FinalButton from './FinalButton';
+import { useEffect, useState } from 'react';
 
-function LibroFinalSeasson({Titulo, Isbn, Foto, Autor, Editor, LibroId, Estado, Editorial, Topico}) {
+function LibroFinalSeasson({Titulo, Isbn, Foto, Autor, Editor, LibroId, Estado, Editorial, Topico, IdAlumno, go}) {
     const TituloIniciales = Titulo
         .split(' ')
         .slice(0, 2)
@@ -27,11 +28,62 @@ function LibroFinalSeasson({Titulo, Isbn, Foto, Autor, Editor, LibroId, Estado, 
             Editor,
             Estado,
             Editorial,
-            Topico
+            Topico,
+
         };
         localStorage.setItem('LibroActual', JSON.stringify(libroReservado));
         location.href = "/alumno/prestamos/resultados/detalles";
         };
+
+    const [libroAct, setLibroAct] = useState();
+    const [fecha, setFecha] = useState('');
+    const [libros, setLibros] = useState([]);
+    const [userAct, setUserAct] = useState();
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        console.log('La fecha nueva es: ' + fecha)
+    }, [fecha])
+
+    const fastReserva = () => {
+        //Actualizar la listo de libros
+        console.log('PLAY');
+        const newLibros = JSON.parse(localStorage.getItem('libros'));
+        setLibros(newLibros)
+        const libroAfectado = newLibros.find(libro => libro.id === LibroId);
+        //Encontrar alumno
+        const newUsuarios = JSON.parse(localStorage.getItem('usuarios'));
+        setUsers(newUsuarios)
+        const usuarioAfectado = newUsuarios.find(usuario => usuario.Id === IdAlumno);
+
+        if(libroAfectado && usuarioAfectado){
+            const nuevosValores = {
+                disponibilidad: false,
+                FechaDevolucion: fecha,
+                pedidos: libroAfectado.pedidos + 1,
+
+            }
+            
+            Object.assign(libroAfectado, nuevosValores);
+
+            const nuevaListaLibros = newLibros.map(libro => (libro.id === LibroId ? libroAfectado : libro));
+            setLibros(nuevaListaLibros);
+            localStorage.setItem('libros', JSON.stringify(nuevaListaLibros));
+
+            usuarioAfectado.librosPrestados.push(libroAfectado);
+            localStorage.setItem('UsuarioActual', JSON.stringify(usuarioAfectado));
+            const nuevaListaUsuarios = newUsuarios.map(usuario => (usuario.Id === IdAlumno ? usuarioAfectado : usuario));
+            setUsers(nuevaListaUsuarios);
+            localStorage.setItem('usuarios', JSON.stringify(nuevaListaUsuarios));
+            go(LibroId)
+            location.href = '/alumno'
+
+        } else {
+            console.error(`No se encontró ningún libro con el id ${id}`)
+        }
+
+
+    }
 
     return (
         <>
@@ -75,7 +127,7 @@ function LibroFinalSeasson({Titulo, Isbn, Foto, Autor, Editor, LibroId, Estado, 
                 {
                     Estado == true?
                         <div className={styles.reservar}>
-                            <DataPickerAlone />
+                            <DataPickerAlone fastLib={fastReserva} setFecha={setFecha}/>
                             <p onClick={handleMoreInfo} className={styles.moreInfo}>Más información</p>
                         </div>
                     :   

@@ -17,22 +17,26 @@ function index() {
     const [maxPages, setMaxPages] = useState(1);
     const [startPage, setStartPage] = useState(1);
     const [busqueda, setBusqueda] = useState('');
+    const [start, setStart] = useState('');
 
     useEffect(() => {
         let constUsuario = localStorage.getItem('UsuarioActual');
         if (constUsuario) {
             const usuario = JSON.parse(constUsuario);
             setNombreUser(usuario.Nombre);
-            setLibros(usuario.librosPrestados);
+            const libros = usuario.librosPrestados;
+            const tam = libros.lenght;
+            const librosFilt = libros.slice(1, tam)
+            setLibros(librosFilt);
             setIdUser(usuario.Id)
             console.log(usuario.librosPrestados)
         } else {
             console.error('No se encontró el usuario en el local storage.');
         }
-    }, []);
+    }, [start]);
 
     const setearLibrosBuscados = (start, buscarCampo) => {
-        let iniPage = (start * 3) + 1;
+        let iniPage = (start * 3);
         let maxPage = iniPage + 3;
 
         let filteredLibros = libros;
@@ -47,7 +51,7 @@ function index() {
         const slice1 = filteredLibros.slice(iniPage, maxPage);
         setLibrosMostrar(slice1);
 
-        let oldMaxPages = Math.ceil((filteredLibros.length-1)/ 3);
+        let oldMaxPages = Math.ceil((filteredLibros.length)/ 3);
         setMaxPages(oldMaxPages);
         
     }
@@ -110,6 +114,7 @@ function index() {
                                         Topico={libro.categoria}
                                         Accion='Devolver'
                                         IdAlumno = {idUser}
+                                        go = {setStart}
                                     />
                                 ))}
                             </div>

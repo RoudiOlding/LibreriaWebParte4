@@ -14,6 +14,8 @@ import Libro2 from '@/components/Libro2';
 function index() {
     const [nombreUser, setNombreUser] = useState('');
     const [ini, setIni] = useState(1)
+    const [idUser, setIdUser] = useState('');
+    const [start, setStart] = useState('');
     
     useEffect(() => {
         let constUsuario = localStorage.getItem('UsuarioActual');
@@ -21,10 +23,11 @@ function index() {
         if (constUsuario) {
             const usuario = JSON.parse(constUsuario);
             setNombreUser(usuario.Nombre);
+            setIdUser(usuario.Id)
         } else {
             console.error('No se encontró el usuario en el local storage.');
         }
-    }, []);
+    }, [start]);
 
     const [libros, setLibros] = useState([]);
     const [librosMostrar, setLibrosMostrar] = useState([]);
@@ -51,6 +54,10 @@ function index() {
 
     const P3reload = () => {
         location.href = '/alumno/prestamos';
+    }
+
+    const goRersevas = () => {
+        location.href = '/alumno/misLibros';
     }
 
     useEffect(() => {
@@ -92,7 +99,9 @@ function index() {
                             <Divider />
                             <div className={styles.resultado}>
                                 <p>Resultados de la búsqueda</p>
-                                <Boton2 texto='Ver mis reservas' estilo='outlined'/>
+                                <div onClick={goRersevas}>
+                                    <Boton2 texto='Ver mis reservas' estilo='outlined'/>
+                                </div>
                             </div>
                             <div className={styles.conteAgregar3}>
                                 {librosMostrar.map((libro) => (
@@ -106,6 +115,8 @@ function index() {
                                     Estado={libro.disponibilidad}
                                     Editorial={libro.editorial}
                                     Topico={libro.categoria}
+                                    IdAlumno = {idUser}
+                                    go = {setStart}
                                     />
                                     ))
                                 }

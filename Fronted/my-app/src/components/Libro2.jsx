@@ -10,57 +10,48 @@ import Boton3 from '@/components/Button3';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import IconButton from '@mui/material/IconButton';
 
-function Libro2({ Titulo, Isbn, Foto, Autor, Editor , Accion, LibroId, Estado, Editorial, Topico, IdAlumno}) {
+function Libro2({ Titulo, Isbn, Foto, Autor, Editor , Accion, LibroId, Estado, Editorial, Topico, IdAlumno, go}) {
     const TituloIniciales = Titulo
         ?.split(' ')
         ?.slice(0, 2)
         ?.map(word => word.charAt(0).toUpperCase())
         ?.join('');
 
-    const [libroAct, setLibroAct] = useState();
-    const [fecha, setFecha] = useState('');
-    const [libros, setLibros] = useState([]);
-    const [userAct, setUserAct] = useState();
-    const [users, setUsers] = useState([]);
-
     const devolverLibro = (LibroId, IdAlumno) => {
-        //Actualizar la listo de libros
+        // Encontrar el libro por el id y cambiarle los valores de "fecha" y "disponibilidad" y remplazarlo en la lista
         const newLibros = JSON.parse(localStorage.getItem('libros'));
-        setLibros(newLibros)
-        const libroAfectado = newLibros.find(libro => libro.id === LibroId);
+        const libroAfectado = newLibros.find(x => x.id == LibroId);
+        const newUsuario = JSON.parse(localStorage.getItem('usuarios'));
+        const usuarioAfectado = newUsuario.find(x => x.Id == IdAlumno)
 
-        //Encontrar alumno
-        const newUsuarios = JSON.parse(localStorage.getItem('usuarios'));
-        setUsers(newUsuarios)
-        const usuarioAfectado = newUsuarios.find(usuario => usuario.Id === IdAlumno);
-
-        if(libroAfectado && usuarioAfectado){
+        if(libroAfectado){
             const nuevosValores = {
                 disponibilidad: true,
                 FechaDevolucion: '',
             }
-            
+
             Object.assign(libroAfectado, nuevosValores);
-
             const nuevaListaLibros = newLibros.map(libro => (libro.id === LibroId ? libroAfectado : libro));
-            setLibros(nuevaListaLibros);
             localStorage.setItem('libros', JSON.stringify(nuevaListaLibros));
-
-            const finalLibros = usuarioAfectado.librosPrestados.filter(usuarioAfectado => usuarioAfectado.id !== LibroId)
-
+            //Poner el set a lista general de libros
+            const nuevaListaLibrosPrestados = usuarioAfectado.librosPrestados.filter(libro => libro.id !== LibroId);
+            usuarioAfectado.librosPrestados = nuevaListaLibrosPrestados;
             localStorage.setItem('UsuarioActual', JSON.stringify(usuarioAfectado));
-            const nuevaListaUsuarios = newUsuarios.map(usuario => (usuario.Id === IdAlumno ? usuarioAfectado : usuario));
-            setUsers(nuevaListaUsuarios);
-            localStorage.setItem('usuarios', JSON.stringify(nuevaListaUsuarios));
-            window.location.reload()
+            const listaFinalUsuario = newUsuario.map(user => (user.Id === IdAlumno? usuarioAfectado : user));
+            //Actualizar lista usuarios
+            localStorage.setItem('usuarios', JSON.stringify(listaFinalUsuario));
+            go(LibroId);
 
-        } else {
-            console.error(`No se encontró ningún libro con el id ${IdAlumno}`)
-            console.error(`No se encontró ningún libro con el id ${LibroId}`)
         }
 
-        //Subir el nuevo libro del usuario a su listo de libros
+        // Quitar la el libro de la lista de usuarios y remplazar la lista
+
+        // Actualizar el usuario actual
     }
+
+    useEffect(() => {
+
+    })
 
     return (
         <>

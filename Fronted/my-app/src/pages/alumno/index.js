@@ -12,15 +12,25 @@ function index() {
     const [librosUserProx, setLibrosUserProx] = useState([]);
 
     useEffect(() => {
-        let constUsuario = localStorage.getItem('UsuarioActual');
+        let constUsuario = localStorage.getItem('UsuarioActual');   
         if (constUsuario) {
             const usuario = JSON.parse(constUsuario);
             const librosPrestados = usuario.librosPrestados;
-            if(librosPrestados){
-                const reserv = [...librosPrestados].sort((a, b) => new Date(b.FechaDevolucion) - new Date(a.FechaDevolucion));
+            if(librosPrestados.length > 1){
+                const reserv = [...librosPrestados].reverse();
+                console.log(reserv);
                 const prox = [...librosPrestados].sort((a, b) => new Date(a.FechaDevolucion) - new Date(b.FechaDevolucion));
-                const first2bookReserv = reserv.slice(1,3);
-                const first2bookProx = prox.slice(1,3);
+                console.log(prox);
+                let maxPages = librosPrestados.length -1;
+                if(maxPages > 2){
+                    maxPages = 2;
+                }
+                let maxPages2 = librosPrestados.length;
+                if(maxPages2 > 2){
+                    maxPages2 = 3;
+                }
+                const first2bookReserv = reserv.slice(0,maxPages);
+                const first2bookProx = prox.slice(1,maxPages2);
                 setLibrosUserReserv(first2bookReserv);
                 setLibrosUserProx(first2bookProx);
             }else{
@@ -31,11 +41,6 @@ function index() {
             console.error('No se encontró el usuario en el local storage.');
         }
     }, []);
-
-    useEffect(() => {
-        console.log(librosUserReserv)
-        console.log(librosUserProx)
-    }, [librosUserReserv, librosUserProx ])
     
     return (
         <>
